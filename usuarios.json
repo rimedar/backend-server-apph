@@ -1,0 +1,64 @@
+{
+	"data": [
+		{
+			"nombre": "Raquel Rodrígez I",
+			"correo": "Gabriel21@hotmail.com",
+			"password": "$2a$10$egKyJ9fb3Be2TXGeR7L.iuieFzXiCcf/Xzq/iaIi9bGuaW1.i5a8G",
+			"role": "MISIONAL"
+		},
+		{
+			"nombre": "Laura Rocha Jr.",
+			"correo": "JosMara18@hotmail.com",
+			"password": "$2a$10$0BQEGB/cNoHnCefLqEW.JuG43Mvcillb0BpWMsnmhZLQY2xuwB0wi",
+			"role": "GESTOR"
+		},
+		{
+			"nombre": "Ramona Castañeda",
+			"correo": "Marta13@gmail.com",
+			"password": "$2a$10$eEz7nu7513dNh07Pbf64zOg./DZMtxSHua9sWtEQNU45YFI9MZQWa",
+			"role": "GESTOR"
+		},
+		{
+			"nombre": "Claudia Sánchez",
+			"correo": "Vctor.Berros45@gmail.com",
+			"password": "$2a$10$OS1mjuQn4m4MLELGHfgMN.eGslb/Ejea3NKe5Z7QKsFjmnTnk3jxC",
+			"role": "GESTOR"
+		},
+		{
+			"nombre": "Luisa Anguiano",
+			"correo": "Benjamn_Feliciano76@gmail.com",
+			"password": "$2a$10$Ks7j6tYjYxAZI90ZyhG/JO/N3SPLByH2inq7veWHOBY4y7UvvoRZu",
+			"role": "MISIONAL"
+		},
+		{
+			"nombre": "Enrique Orta",
+			"correo": "Alicia.Paredes96@hotmail.com",
+			"password": "$2a$10$pstGwBv8HTS.2f0oWolq9OZ9fZcjliaePv8YLREpEV9wvqeeC/NlG",
+			"role": "MISIONAL"
+		},
+		{
+			"nombre": "Sr. Emilio Ureña",
+			"correo": "MaradelCarmen47@yahoo.com",
+			"password": "$2a$10$Sad/chtGRL/JdlVKAWrxSeqI4TMXIOryyPFQz2tpvik2h0XpCWaku",
+			"role": "GESTOR"
+		},
+		{
+			"nombre": "Lucas Garibay",
+			"correo": "Catalina43@gmail.com",
+			"password": "$2a$10$EGR.4rtZMRDmg/1wdYokquowZj0YwUuu5TUrHigYSCrvzo/t4.z2W",
+			"role": "MISIONAL"
+		},
+		{
+			"nombre": "María Teresa García",
+			"correo": "Manuel36@yahoo.com",
+			"password": "$2a$10$Ya8knnFUim6W//BSWBxiG.AOnQyNsUsyxREBGSd2KvxiKLjb330rS",
+			"role": "MISIONAL"
+		},
+		{
+			"nombre": "Dorotea Dávila",
+			"correo": "Samuel_Ramos13@hotmail.com",
+			"password": "$2a$10$HFzvCNqE5TXhNu/fE23kRuo6GQ/JVIXdORlRH33NJnKBGzSCXkJOu",
+			"role": "GESTOR"
+		}
+	]
+}

@@ -8,7 +8,7 @@ var Usuario = require('../models/usuario');
 
 app.get('/', (req, res, next) => {
 
-  Usuario.find({}, 'nombre email img role')
+  Usuario.find({}, 'nombre correo role')
     .exec((err, usuarios) => {
     if (err) {
       return res.status(500).json({
@@ -29,15 +29,14 @@ app.get('/', (req, res, next) => {
 //    <<<<<<<   Crear nuevo usuario       >>>>>>>
 // <<================================================>>
 
-app.post('/', mdAutenticacion.verificaToken, (req, res) => {
+app.post('/', (req, res) => {
 
   var body = req.body;
 
   var usuario = new Usuario({
       nombre: body.nombre,
-      email: body.email,
+      correo: body.correo,
       password: bcrypt.hashSync(body.password, 10),
-      img: body.img,
       role: body.role
   });
 
@@ -91,7 +90,7 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
 
 
       usuario.nombre = body.nombre;
-      usuario.email = body.email;
+      usuario.correo = body.correo;
       usuario.role = body.role;
 
       usuario.save((err, usuarioGuardado) => {

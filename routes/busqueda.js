@@ -2,8 +2,8 @@ var express = require('express');
 
 var app = express();
 
-var Hospital = require('../models/hospital');
-var Medico = require('../models/medico');
+var Expediente = require('../models/expediente');
+var Prestamo = require('../models/prestamo');
 var Usuario = require('../models/usuario');
 
 // ==============================
@@ -23,18 +23,18 @@ app.get('/coleccion/:tabla/:busqueda', (req, res) => {
             promesa = buscarUsuarios(busqueda, regex);
             break;
 
-        case 'medicos':
-            promesa = buscarMedicos(busqueda, regex);
+        case 'prestamos':
+            promesa = buscarPrestamos(busqueda, regex);
             break;
 
-        case 'hospitales':
-            promesa = buscarHospitales(busqueda, regex);
+        case 'expedientes':
+            promesa = buscarExpedientes(busqueda, regex);
             break;
 
         default:
             return res.status(400).json({
                 ok: false,
-                mensaje: 'Los tipos de busqueda sólo son: usuarios, medicos y hospitales',
+                mensaje: 'Los tipos de busqueda sólo son: usuarios, prestamos y expedientes',
                 error: { message: 'Tipo de tabla/coleccion no válido' }
             });
 
@@ -62,16 +62,16 @@ app.get('/todo/:busqueda', (req, res, next) => {
 
 
     Promise.all([
-            buscarHospitales(busqueda, regex),
-            buscarMedicos(busqueda, regex),
+            buscarExpedientes(busqueda, regex),
+            buscarPrestamos(busqueda, regex),
             buscarUsuarios(busqueda, regex)
         ])
         .then(respuestas => {
 
             res.status(200).json({
                 ok: true,
-                hospitales: respuestas[0],
-                medicos: respuestas[1],
+                expedientes: respuestas[0],
+                prestamos: respuestas[1],
                 usuarios: respuestas[2]
             });
         })
@@ -80,36 +80,54 @@ app.get('/todo/:busqueda', (req, res, next) => {
 });
 
 
-function buscarHospitales(busqueda, regex) {
-
+function buscarExpedientes(busqueda, regex) {
+    //console.log("Aqui" + typeof busqueda);
+    //busqueda = parseInt(busqueda);
+    //console.log("Aqui" + typeof busqueda);
     return new Promise((resolve, reject) => {
 
-        Hospital.find({ nombre: regex })
-            .populate('usuario', 'nombre email')
-            .exec((err, hospitales) => {
-
+        //Expediente.find({ cc_solocitante: regex })
+        Expediente.find({nombre_predio: regex})
+            .or([{ 'id_expediente': regex  }, { 'cc_solocitante': regex }, { 'nombre_predio': regex }])
+            .populate('Usuario', 'nombre email')
+            .exec((err, expedientes) => {
                 if (err) {
-                    reject('Error al cargar hospitales', err);
+                    reject('Error al cargar expedientes', err);
                 } else {
-                    resolve(hospitales)
+                    resolve(expedientes)
                 }
             });
     });
 }
 
-function buscarMedicos(busqueda, regex) {
+function is_numeric(value) {
+	return !isNaN(parseFloat(value)) && isFinite(value);
+}
 
+function buscarPrestamos(busqueda, regex) {
+    //busqueda = parseInt(busqueda);
+    //regex = parseInt(regex);
+    console.log(is_numeric(regex));
+    // if (is_numeric(busqueda)) {
+        
+    // }
     return new Promise((resolve, reject) => {
 
-        Medico.find({ nombre: regex })
-            .populate('usuario', 'nombre email')
-            .populate('hospital')
-            .exec((err, medicos) => {
+        //Prestamo.find({ id_usuario: { nombre: regex } })
+        Prestamo.find({ })
+        //Prestamo.find({id_usuario : {nombre: busqueda}},{nombre:1,correo:1,_id:0, role:0})
+            //.or([ { 'id_usuario': { nombre: busqueda }}, {'id_usuario': busqueda}])
+            .populate('usuario', 'nombre correo')
+            .populate('expediente')
+            .or([{'id_exp': busqueda}, {'id_usuario': busqueda}])
+            .exec((err, prestamos) => {
 
-                if (err) {
-                    reject('Error al cargar medicos', err);
+                if (err) {  
+                    reject('Error al cargar prestamos', err);
                 } else {
-                    resolve(medicos)
+                    resolve(prestamos);
+                    console.log(prestamos);
+                    
                 }
             });
     });
@@ -119,8 +137,8 @@ function buscarUsuarios(busqueda, regex) {
 
     return new Promise((resolve, reject) => {
 
-        Usuario.find({}, 'nombre email role')
-            .or([{ 'nombre': regex }, { 'email': regex }])
+        Usuario.find({}, {password:0})
+            .or([{ 'nombre': regex }, { 'correo': regex }])
             .exec((err, usuarios) => {
 
                 if (err) {

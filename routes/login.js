@@ -7,11 +7,15 @@ var SEED = require('../config/config').SEED;
 var app = express();
 var Usuario = require('../models/usuario');
 
+// <<================================================>>
+//    <<<<<<<     Iniciar sesión     >>>>>>>
+// <<================================================>>
+
 app.post('/', (req, res) => {
 
     var body = req.body;
 
-    Usuario.findOne({ email: body.email }, (err, usuarioDB) => {
+    Usuario.findOne({ correo: body.correo }, (err, usuarioDB) => {
 
         if (err) {
             return res.status(500).json({
