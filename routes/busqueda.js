@@ -5,6 +5,7 @@ var app = express();
 var Expediente = require('../models/expediente');
 var Prestamo = require('../models/prestamo');
 var Usuario = require('../models/usuario');
+var HistoricoPrestamo = require('../models/historial-prestamo');
 
 // ==============================
 // Busqueda por colección
@@ -26,6 +27,10 @@ app.get('/coleccion/:tabla/:busqueda', (req, res) => {
         case 'prestamos':
             promesa = buscarPrestamos(busqueda, regex);
             break;
+        
+        case 'historico-prestamos':
+                promesa = buscarHistoricoPrestamos(busqueda, regex);
+                break;
 
         case 'expedientes':
             promesa = buscarExpedientes(busqueda, regex);
@@ -34,7 +39,7 @@ app.get('/coleccion/:tabla/:busqueda', (req, res) => {
         default:
             return res.status(400).json({
                 ok: false,
-                mensaje: 'Los tipos de busqueda sólo son: usuarios, prestamos y expedientes',
+                mensaje: 'Los tipos de busqueda sólo son: usuarios, prestamos, historico-prestamos y expedientes',
                 error: { message: 'Tipo de tabla/coleccion no válido' }
             });
 
@@ -64,6 +69,7 @@ app.get('/todo/:busqueda', (req, res, next) => {
     Promise.all([
             buscarExpedientes(busqueda, regex),
             buscarPrestamos(busqueda, regex),
+            buscarHistoricoPrestamos(busqueda, regex),
             buscarUsuarios(busqueda, regex)
         ])
         .then(respuestas => {
@@ -72,7 +78,8 @@ app.get('/todo/:busqueda', (req, res, next) => {
                 ok: true,
                 expedientes: respuestas[0],
                 prestamos: respuestas[1],
-                usuarios: respuestas[2]
+                historicoPrestamos:respuestas[2],
+                usuarios: respuestas[3]
             });
         })
 
@@ -87,7 +94,7 @@ function buscarExpedientes(busqueda, regex) {
     return new Promise((resolve, reject) => {
 
         //Expediente.find({ cc_solocitante: regex })
-        Expediente.find({nombre_predio: regex})
+        Expediente.find({})
             .or([{ 'id_expediente': regex  }, { 'cc_solocitante': regex }, { 'nombre_predio': regex }])
             .populate('Usuario', 'nombre email')
             .exec((err, expedientes) => {
@@ -127,6 +134,35 @@ function buscarPrestamos(busqueda, regex) {
                 } else {
                     resolve(prestamos);
                     console.log(prestamos);
+                    
+                }
+            });
+    });
+}
+
+function buscarHistoricoPrestamos(busqueda, regex) {
+    //busqueda = parseInt(busqueda);
+    //regex = parseInt(regex);
+    console.log(is_numeric(regex));
+    // if (is_numeric(busqueda)) {
+        
+    // }
+    return new Promise((resolve, reject) => {
+
+        //Prestamo.find({ id_usuario: { nombre: regex } })
+        HistoricoPrestamo.find({ })
+        //Prestamo.find({id_usuario : {nombre: busqueda}},{nombre:1,correo:1,_id:0, role:0})
+            //.or([ { 'id_usuario': { nombre: busqueda }}, {'id_usuario': busqueda}])
+            .populate('usuario', 'nombre correo')
+            .populate('expediente')
+            .or([{'id_exp': busqueda}, {'id_usuario': busqueda}])
+            .exec((err, hPrestamos) => {
+
+                if (err) {  
+                    reject('Error al cargar historial de prestamos', err);
+                } else {
+                    resolve(hPrestamos);
+                    console.log(hPrestamos);
                     
                 }
             });

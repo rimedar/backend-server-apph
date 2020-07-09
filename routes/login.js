@@ -48,9 +48,47 @@ app.post('/', (req, res) => {
             ok: true,
             usuario: usuarioDB,
             token: token,
-            id: usuarioDB._id
+            id: usuarioDB._id,
+            menu:cargarMenu(usuarioDB.role)
         });
     })
 });
+
+function cargarMenu(role) {
+    let menu = [
+        {
+          titulo: 'Principal',
+          icono: 'mdi mdi-gauge',
+          submenu: [
+            { titulo: 'Inicio', url: '/dashboard' },
+          ]
+        },
+        {
+          titulo: 'Gestionar',
+          icono: 'mdi mdi-folder-lock-open',
+          submenu: [
+            //{ titulo: 'Usuarios', url: '/usuarios' },
+            { titulo: 'Expedientes', url: '/expedientes' },
+            { titulo: 'Prestamos', url: '/prestamos' }
+            // { titulo: 'Historico de Prestamos', url: '/historial-prestamos' }
+          ]
+        }
+    ];
+    
+    if (role === 'ADMIN') {
+        menu[1].submenu.unshift({ titulo: 'Usuarios', url: '/usuarios' });
+        menu[1].submenu.push(
+            { titulo: 'Historico de Prestamos', url: '/historial-prestamos' }
+        );
+    }
+    if (role === 'GESTOR') {
+        // menu[1].submenu.unshift({ titulo: 'Usuarios', url: '/usuarios' });
+        menu[1].submenu.push(
+            { titulo: 'Historico de Prestamos', url: '/historial-prestamos' }
+        );
+    }
+
+    return menu;
+}
 
 module.exports = app;

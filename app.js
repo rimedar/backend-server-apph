@@ -28,6 +28,7 @@ app.use(bodyParser.json())
 
 var expedienteRoutes = require('./routes/expediente')
 var prestamoRoutes = require('./routes/prestamo')
+var historialPrestamoRoutes = require('./routes/historial-prestamo')
 var appRoutes = require('./routes/app');
 var usuarioRoutes = require('./routes/usuario');
 var loginRoutes = require('./routes/login');
@@ -51,6 +52,7 @@ mongoose.connection.openUri('mongodb://localhost:27017/sipres',
 
 // Rutas
 app.use('/expediente', expedienteRoutes);
+app.use('/historial-prestamo', historialPrestamoRoutes);
 app.use('/prestamo', prestamoRoutes);
 app.use('/busqueda', busquedaRoutes);
 app.use('/usuario', usuarioRoutes);

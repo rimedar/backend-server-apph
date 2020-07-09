@@ -3,11 +3,11 @@ var express = require('express');
 var mdAutenticacion = require('../middlewares/autenticacion');
 var app = express();
 
-var Prestamo = require('../models/prestamo');
+var HistorialPrestamo = require('../models/historial-prestamo');
 const expediente = require('../models/expediente');
 
 // <<================================================>>
-//    <<<<<<<     Consultar todos los prestamos     >>>>>>>
+//    <<<<<<<     Consultar historial de prestamos     >>>>>>>
 // <<================================================>>
 
 
@@ -16,11 +16,11 @@ app.get('/', (req, res, next) => {
     var desde = req.query.desde || 0;
     desde = Number(desde);
     
-    Prestamo.find({})
-    .skip(desde)
+    HistorialPrestamo.find({})
+    //.skip(desde)
       //.limit(5)
       // Se debe poner populate(nombre de campo referecial), no el nombre de la coleccion
-     .populate('id_exp')
+    .populate('id_exp')
     .populate('id_usuario', 'nombre correo')
       .exec((err, prestamos) => {
       if (err) {
@@ -30,7 +30,7 @@ app.get('/', (req, res, next) => {
           errors: err
         });
         }
-        Prestamo.countDocuments({}, (err, conteo) => {
+        HistorialPrestamo.countDocuments({}, (err, conteo) => {
         res.status(200).json({
           ok: true,
           prestamos: prestamos,
@@ -73,24 +73,25 @@ app.get('/', (req, res, next) => {
 
 
 // <<================================================>>
-//    <<<<<<<   Crear nuevo prestamo       >>>>>>>
+//    <<<<<<<   Crear nuevo historico prestamo       >>>>>>>
 // <<================================================>>
 
 app.post('/', mdAutenticacion.verificaToken, (req, res) => {
 
   var body = req.body;
 
-  var prestamo = new Prestamo({
+  var Hprestamo = new HistorialPrestamo({
     item: body.item,
+    id_expediente: body.id_expediente,
+    nombre_usuario: body.nombre_usuario,
     fecha_prestamo: body.fecha_prestamo,
     estado_prestamo: body.estado_prestamo,
-    // expediente_id: body.expediente_id,
     fecha_devolucion: body.fecha_devolucion,
     id_exp: body.id_exp,
     id_usuario:body.id_usuario
   });
 
-  prestamo.save((err, prestamoGuardado) => {
+  Hprestamo.save((err, prestamoGuardado) => {
 
     if (err) {
       return res.status(400).json({
@@ -99,7 +100,7 @@ app.post('/', mdAutenticacion.verificaToken, (req, res) => {
         errors: err
       });
     } else {
-      expediente.findByIdAndUpdate(body.id_exp, { prestado: true }, (err, expediente) => {
+      expediente.findByIdAndUpdate(body.id_exp, { prestado: false }, (err, expediente) => {
         if (err) {
           return res.status(500).json({
             ok: false,
@@ -109,7 +110,7 @@ app.post('/', mdAutenticacion.verificaToken, (req, res) => {
         } else {
           res.status(201).json({
             ok: true,
-            prestamo: prestamoGuardado,
+            Hprestamo: prestamoGuardado,
           });
         }
       });
@@ -228,35 +229,35 @@ app.post('/', mdAutenticacion.verificaToken, (req, res) => {
 // <<================================================>>
 // El prestamo se elimina al hacer copia en historial prestamos desde frontend
 
- app.delete('/:id', mdAutenticacion.verificaToken, (req, res) => {
+//  app.delete('/:id', (req, res) => {
 
-    var id = req.params.id;
+//     var id = req.params.id;
 
-    Prestamo.findByIdAndRemove(id, (err,prestamoBorrado) => {
+//     Prestamo.findByIdAndRemove(id, (err,prestamoBorrado) => {
 
-        if (err) {
-            return res.status(500).json({
-                ok: false,
-                mensaje: 'Error al borrarprestamo',
-                errors: err
-            });
-        }
+//         if (err) {
+//             return res.status(500).json({
+//                 ok: false,
+//                 mensaje: 'Error al borrarprestamo',
+//                 errors: err
+//             });
+//         }
 
-        if (!prestamoBorrado) {
-            return res.status(400).json({
-                ok: false,
-                mensaje: 'No existe unprestamo con ese id',
-                errors: { message: 'No existe unprestamo con ese id' }
-            });
-        }
+//         if (!prestamoBorrado) {
+//             return res.status(400).json({
+//                 ok: false,
+//                 mensaje: 'No existe unprestamo con ese id',
+//                 errors: { message: 'No existe unprestamo con ese id' }
+//             });
+//         }
 
-        res.status(200).json({
-            ok: true,
-           prestamo:prestamoBorrado
-        });
+//         res.status(200).json({
+//             ok: true,
+//            prestamo:prestamoBorrado
+//         });
 
-    });
+//     });
 
-}); 
+// }); 
 
 module.exports = app;
